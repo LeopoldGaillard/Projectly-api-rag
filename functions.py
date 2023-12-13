@@ -3,6 +3,23 @@ from langdetect import detect
 from deep_translator import GoogleTranslator
 import uuid
 
+def initial_docs_index(client):
+
+    if not client.indices.exists(index="initial_docs"):
+        client.indices.create(index="initial_docs")
+    
+    mapping = {
+        "properties": {
+            "id": {"type": "keyword"},
+            "title": {"type": "text"},
+            "description": {"type": "text"},
+            "content": {"type": "text"}
+        }
+    }
+
+    # Appliquer le mapping à l'index
+    client.indices.put_mapping(index="initial_docs", body=mapping)
+
 def extract_text_from_pdf(pdf_stream):
     reader = PyPDF2.PdfReader(pdf_stream)
     content = ''
