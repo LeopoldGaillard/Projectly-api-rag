@@ -1,9 +1,7 @@
 from flask import Flask, jsonify, request
 from elasticsearch import Elasticsearch
-from functions import extract_text_from_pdf, split_into_chunks
+from functions import *
 from werkzeug.utils import secure_filename
-from langdetect import detect
-from deep_translator import GoogleTranslator
 import os, json
 
 ALLOWED_EXTENSIONS = ['.txt', '.pdf', '.csv']
@@ -95,13 +93,11 @@ def upload_file(index_name):
                 content = file.stream.read().decode('utf-8')
             else:
                 content = extract_text_from_pdf(file.stream)
-            if detect(content) != 'en':
-                # Pour éviter le not valid length error (need to be between 0 and 5000 characters)
-                # On sépare en plusieurs chunks de 200 mots
-                chunks = list(split_into_chunks(content, 200))
-                content = ''
-                for chunk in chunks:
-                    content += GoogleTranslator(source='auto', target='en').translate(chunk) + ' '
+
+            # Si le contenu du document n'est pas en anglais, on le traduit
+            content = translate_if_not_english(content)
+            
+            content = create_token_string(content)
 
             # Créez le doc pour la BD
             document = {
