@@ -35,7 +35,7 @@ def delete_index(index_name):
     res = client.indices.delete(index=index_name)
     return jsonify(res.body)
 
-# Route qui affiche tous les documents d'un index
+# Route qui affiche tous les documents de l'index 'projectly'
 @app.route('/projectly/files/all')
 def get_all_files():
     response = client.search(index='projectly')
@@ -59,7 +59,7 @@ def get_files_by_request(req):
     docs = first_response["hits"]["hits"]
 
     if docs != []:
-        # Récupération des id des documents non tokenisés pour pouvoir ensuite récupérer les documents tokeniés
+        # Récupération des id des documents non tokenisés pour pouvoir ensuite afficher les documents tokeniés
         ids = [hit["_source"]["id"] for hit in first_response["hits"]["hits"]]
         response = client.mget(index='projectly', body={"ids": ids})
 
@@ -100,8 +100,8 @@ def upload_file():
         filename = secure_filename(file.filename)
         file_extension = os.path.splitext(filename)[1]
 
-        description = request.form.get('description', 'No Description Provided')
-        data_type = request.form.get('dataType', 'Default Type')
+        description = request.form.get('description', 'No description provided')
+        data_type = request.form.get('dataType', 'No data type provided')
 
         if file_extension in ALLOWED_EXTENSIONS:
 

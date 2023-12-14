@@ -17,6 +17,8 @@ const FileUpload = () => {
     "Other",
   ];
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -27,7 +29,13 @@ const FileUpload = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setIsLoading(true);
+    setMessage("");
+    setIsError(false);
+
     const formData = new FormData();
+
     formData.append("file", file);
     formData.append("description", description);
     formData.append("dataType", dataType);
@@ -45,31 +53,58 @@ const FileUpload = () => {
         `Error uploading file: ${error.response?.data?.error || error.message}`
       );
       setIsError(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div>
+    <div className="form-container">
       <form onSubmit={handleSubmit}>
-        <input type="file" onChange={handleFileChange} />
+        <div className="form-row">
+          <input
+            className="form-input form-input-file"
+            type="file"
+            accept=".pdf,.csv,.txt"
+            onChange={handleFileChange}
+          />
 
-        <select value={dataType} onChange={(e) => setDataType(e.target.value)}>
-          <option value="">Select Type</option>
-          {DATA_TYPES.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
+          <select
+            className="form-select"
+            value={dataType}
+            onChange={(e) => setDataType(e.target.value)}
+          >
+            <option value="">Select Type</option>
+            {DATA_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        <input
-          type="text"
-          value={description}
-          onChange={handleDescriptionChange}
-          placeholder="Enter description here"
-        />
-        <button type="submit">Upload</button>
+        <div className="form-row">
+          <textarea
+            className="form-input"
+            rows={5}
+            cols={60}
+            value={description}
+            onChange={handleDescriptionChange}
+            placeholder="Enter description here"
+          />
+        </div>
+
+        <button className="form-button" type="submit" disabled={isLoading}>
+          {isLoading ? "Uploading..." : "Upload"}
+        </button>
       </form>
+      <div
+        className="loading-indicator"
+        style={{ display: isLoading ? "block" : "none" }}
+      >
+        Loading...
+      </div>
+
       {message && (
         <div style={{ color: isError ? "red" : "green", marginTop: "10px" }}>
           {message}

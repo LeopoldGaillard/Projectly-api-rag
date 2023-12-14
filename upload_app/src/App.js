@@ -11,7 +11,7 @@ function App() {
       </header>
 
       <div className="App">
-        <h1>File Upload</h1>
+        <h1>Add your doc</h1>
         <FileUpload />
       </div>
     </div>

@@ -36,3 +36,37 @@
     transform: rotate(360deg);
   }
 }
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.form-input,
+.form-select,
+.form-button {
+  margin: 0 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-button {
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+.form-button:hover {
+  background-color: #45a049;
+}
