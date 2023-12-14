@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from elasticsearch import Elasticsearch
 from functions import *
 from werkzeug.utils import secure_filename
@@ -8,6 +9,7 @@ ALLOWED_EXTENSIONS = ['.txt', '.pdf', '.csv']
 
 # Initialisation de Flask et ElasticSearch
 app = Flask(__name__)
+CORS(app)
 client = Elasticsearch("http://localhost:9200")
 init_es_db(client)
 
@@ -47,7 +49,7 @@ def get_files_by_request(req):
         "multi_match": {
             "query": req,
             "type": "best_fields",
-            "fields": ["title^3", "description", "content"],
+            "fields": ["title^2", "description", "data_type^3", "content"],
             "tie_breaker": 0.3,
         }
     }
@@ -98,6 +100,9 @@ def upload_file():
         filename = secure_filename(file.filename)
         file_extension = os.path.splitext(filename)[1]
 
+        description = request.form.get('description', 'No Description Provided')
+        data_type = request.form.get('dataType', 'Default Type')
+
         if file_extension in ALLOWED_EXTENSIONS:
 
             if file_extension == '.txt' or file_extension == '.csv':
@@ -113,10 +118,11 @@ def upload_file():
             # Créez le doc pour la BD
             document = {
                 "title": filename,
-                "description": "Description",
+                "description": description,
                 "extension": file_extension.lstrip('.'),
                 "creatorName": "User",
                 "source": "upload",
+                "data_type": data_type,
                 "content": content_tokenize
             }
 
@@ -127,7 +133,8 @@ def upload_file():
             doc = {
                 "id": response['_id'],
                 "title": filename,
-                "description": "Description",
+                "description": description,
+                "data_type": data_type,
                 "content": content
             }
             response = client.index(index='initial_docs', document=doc)
