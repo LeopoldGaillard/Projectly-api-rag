@@ -9,7 +9,7 @@ ALLOWED_EXTENSIONS = ['.txt', '.pdf', '.csv']
 # Initialisation de Flask et ElasticSearch
 app = Flask(__name__)
 client = Elasticsearch("http://localhost:9200")
-initial_docs_index(client)
+init_es_db(client)
 
 # Route principale
 @app.route('/')
@@ -34,15 +34,15 @@ def delete_index(index_name):
     return jsonify(res.body)
 
 # Route qui affiche tous les documents d'un index
-@app.route('/<index_name>/files/all')
-def get_all_files(index_name):
-    response = client.search(index=index_name)
+@app.route('/projectly/files/all')
+def get_all_files():
+    response = client.search(index='projectly')
     pretty_response = json.dumps(response['hits']['hits'], indent = 3)
     return app.response_class(pretty_response, content_type="application/json")
 
 # Route qui affiche les documents avec le contenu recherché (content ou title)
-@app.route('/<index_name>/files/search/<req>')
-def get_files_by_request(index_name, req):
+@app.route('/projectly/files/search/<req>')
+def get_files_by_request(req):
     query = {
         "multi_match": {
             "query": req,
@@ -54,13 +54,17 @@ def get_files_by_request(index_name, req):
 
     # Faire la recherche dans les documents non tokenizés
     first_response = client.search(index='initial_docs', query=query)
+    docs = first_response["hits"]["hits"]
 
-    # Récupérer les id des documents non tokenisés pour pouvoir ensuite récupérer les documents tokeniés
-    ids = [hit["_source"]["id"] for hit in first_response["hits"]["hits"]]
-    response = client.mget(index=index_name, body={"ids": ids})
+    if docs != []:
+        # Récupération des id des documents non tokenisés pour pouvoir ensuite récupérer les documents tokeniés
+        ids = [hit["_source"]["id"] for hit in first_response["hits"]["hits"]]
+        response = client.mget(index='projectly', body={"ids": ids})
 
-    pretty_response = json.dumps(response['docs'], indent=3)
-    return app.response_class(pretty_response, content_type="application/json")
+        pretty_response = json.dumps(response['docs'], indent=3)
+        return app.response_class(pretty_response, content_type="application/json")
+    else:
+        return []
 
 # Route qui permet d'ajouter manuellement un document
 @app.route('/<index_name>/add', methods=['POST'])
@@ -80,8 +84,8 @@ def add_file(index_name):
     return jsonify(response.body)
 
 # Route qui permet d'uploader un document
-@app.route('/<index_name>/upload', methods=['POST'])
-def upload_file(index_name):
+@app.route('/projectly/upload', methods=['POST'])
+def upload_file():
 
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
@@ -117,7 +121,7 @@ def upload_file(index_name):
             }
 
             # Indexer le document dans ElasticSearch
-            response = client.index(index=index_name, document=document)
+            response = client.index(index='projectly', document=document)
             
             # Indexer le document dans l'index des documents non tokenizés pour pouvoir faire des recherches dessus
             doc = {

@@ -3,22 +3,42 @@ from langdetect import detect
 from deep_translator import GoogleTranslator
 import uuid
 
-def initial_docs_index(client):
+def init_es_db(client):
 
     if not client.indices.exists(index="initial_docs"):
         client.indices.create(index="initial_docs")
     
-    mapping = {
-        "properties": {
-            "id": {"type": "keyword"},
-            "title": {"type": "text"},
-            "description": {"type": "text"},
-            "content": {"type": "text"}
+        mapping = {
+            "properties": {
+                "id": {"type": "keyword"},
+                "title": {"type": "text"},
+                "description": {"type": "text"},
+                "data_type": {"type": "keyword"},
+                "content": {"type": "text"}
+            }
         }
-    }
 
-    # Appliquer le mapping à l'index
-    client.indices.put_mapping(index="initial_docs", body=mapping)
+        # Appliquer le mapping à l'index
+        client.indices.put_mapping(index="initial_docs", body=mapping)
+
+    if not client.indices.exists(index="projectly"):
+        client.indices.create(index="projectly")
+
+        # Définition de la structure détaillée de l'index 'projectly'
+        mapping = {
+                "properties": {
+                    "id": {"type": "keyword"},
+                    "title": {"type": "text"},
+                    "description": {"type": "text"},
+                    "extension": {"type": "keyword"},
+                    "creatorName": {"type": "keyword"},
+                    "source": {"type": "keyword"},
+                    "data_type": {"type": "keyword"},
+                    "content": {"type": "text"}
+                }
+        }
+
+        client.indices.put_mapping(index="projectly", body=mapping)
 
 def extract_text_from_pdf(pdf_stream):
     reader = PyPDF2.PdfReader(pdf_stream)
