@@ -8,8 +8,9 @@ trap cleanup SIGINT
 echo "Installing Python dependencies..."
 pip3 install -r requirements.txt
 
+cd ./api
 echo "Starting Flask server..."
-nohup python3 api.py &
+nohup python3 app.py &
 
 cd ./upload_app
 
