@@ -7,7 +7,7 @@ const FileUpload = () => {
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
 
-  const [dataType, setDataType] = useState("");
+  const [dataType, setDataType] = useState("No data type provided");
   const DATA_TYPES = [
     "Hourly Cost",
     "Bill",
@@ -41,11 +41,15 @@ const FileUpload = () => {
     formData.append("dataType", dataType);
 
     try {
-      await axios.post("http://127.0.0.1:5000/projectly/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await axios.post(
+        "http://127.0.0.1:5000/projectly/docs/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       setMessage("File uploaded successfully!");
       setIsError(false);
     } catch (error) {

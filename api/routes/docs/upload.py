@@ -7,8 +7,8 @@ ALLOWED_EXTENSIONS = ['.txt', '.pdf', '.csv']
 
 upload_api = Blueprint('upload_api', __name__)
 
-@upload_api.route("/projectly/docs/upload", methods=['POST'])
-def upload_file():
+@upload_api.route("/<index_name>/docs/upload", methods=['POST'])
+def upload_file(index_name):
 
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
@@ -26,21 +26,24 @@ def upload_file():
 
         if file_extension in ALLOWED_EXTENSIONS:
 
+            extension = file_extension.lstrip('.')
+
             if file_extension == '.txt' or file_extension == '.csv':
-                content = file.stream.read().decode('utf-8')
+                content = file.read().decode('utf-8')
             else:
                 content = extract_text_from_pdf(file.stream)
 
             # Si le contenu du document n'est pas en anglais, on le traduit
             content = translate_if_not_english(content)
             
-            content_tokenize = create_token_string(content)
+            content_tokenize = tokenization(content)
+            description_tokenize = tokenization(description)
 
             # Créez le doc pour la BD
             document = {
                 "title": filename,
-                "description": description,
-                "extension": file_extension.lstrip('.'),
+                "description": description_tokenize,
+                "extension": extension,
                 "creatorName": "User",
                 "source": "upload",
                 "data_type": data_type,
@@ -48,17 +51,7 @@ def upload_file():
             }
 
             # Indexer le document dans ElasticSearch
-            response = client.index(index='projectly', document=document)
-            
-            # Indexer le document dans l'index des documents non tokenizés pour pouvoir faire des recherches dessus
-            doc = {
-                "id": response['_id'],
-                "title": filename,
-                "description": description,
-                "data_type": data_type,
-                "content": content
-            }
-            response = client.index(index='initial_docs', document=doc)
+            response = client.index(index=index_name, document=document)
 
             return jsonify(response.body)
         else:

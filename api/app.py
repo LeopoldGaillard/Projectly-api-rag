@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from functions import *
 from config import client
 
@@ -13,6 +14,7 @@ from routes.docs.delete import delete_doc
 init_es_db(client)
 
 app = Flask(__name__)
+CORS(app)
 
 app.register_blueprint(create_index)
 app.register_blueprint(delete_index)
@@ -27,4 +29,4 @@ app.register_blueprint(delete_doc)
 def welcome():
     return "Welcome to Projectly !"
 
-app.run(debug=True)
+app.run()

@@ -4,8 +4,8 @@ import json
 rag_search = Blueprint('rag_search', __name__)
 
 # Route qui affiche les documents avec le contenu recherché (content ou title)
-@rag_search.route('/projectly/docs/rag_search/<req>')
-def get_files_by_request(req):
+@rag_search.route('/<index_name>/docs/rag_search/<req>')
+def get_files_by_request(index_name, req):
     query = {
         "multi_match": {
             "query": req,
@@ -15,16 +15,7 @@ def get_files_by_request(req):
         }
     }
 
-    # Faire la recherche dans les documents non tokenizés
-    first_response = client.search(index='initial_docs', query=query)
-    docs = first_response["hits"]["hits"]
+    response = client.search(index=index_name, query=query)
+    pretty_response = json.dumps(response['hits']['hits'], indent=3)
 
-    if docs != []:
-        # Récupération des id des documents non tokenisés pour pouvoir ensuite afficher les documents tokeniés
-        ids = [hit["_source"]["id"] for hit in first_response["hits"]["hits"]]
-        response = client.mget(index='projectly', body={"ids": ids})
-
-        pretty_response = json.dumps(response['docs'], indent=3)
-        return Response(pretty_response, content_type="application/json")
-    else:
-        return []
+    return Response(pretty_response, content_type="application/json")

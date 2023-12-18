@@ -1,25 +1,15 @@
 import PyPDF2
 from langdetect import detect
 from deep_translator import GoogleTranslator
-import uuid
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+import string
+
+nltk.download('punkt')
+nltk.download('stopwords')
 
 def init_es_db(client):
-
-    if not client.indices.exists(index="initial_docs"):
-        client.indices.create(index="initial_docs")
-    
-        mapping = {
-            "properties": {
-                "id": {"type": "keyword"},
-                "title": {"type": "text"},
-                "description": {"type": "text"},
-                "data_type": {"type": "keyword"},
-                "content": {"type": "text"}
-            }
-        }
-
-        # Appliquer le mapping à l'index
-        client.indices.put_mapping(index="initial_docs", body=mapping)
 
     if not client.indices.exists(index="projectly"):
         client.indices.create(index="projectly")
@@ -64,24 +54,17 @@ def translate_if_not_english(content):
     
     return content
 
-def tokenize_content_words(content):
-    word_map = {}
-    for index, word in enumerate(content.split()):
-        if word not in word_map:
-            word_map[word] = {"positions": [index], "token": str(uuid.uuid4())}
-        else:
-            word_map[word]["positions"].append(index)
-    return word_map
+def tokenization(text):
 
-def create_token_string(content):
+    # Convertir en minuscules
+    text = text.lower()
+
+    # Tokenization
+    tokens = word_tokenize(text)
+
+    # Supprimer les ponctuations et les stop words
+    tokens = [word for word in tokens if word not in string.punctuation]
+    stop_words = set(stopwords.words('english'))
+    filtered_tokens = [word for word in tokens if word not in stop_words]
     
-    words_map = tokenize_content_words(content)
-    # Tri par index pour reconstituer le texte dans l'ordre original
-    sorted_tokens = sorted(
-        [(index, words_map[word]['token']) for word in words_map for index in words_map[word]['positions']],
-        key=lambda x: x[0]
-    )
-
-    # Génération de la chaîne de tokens
-    token_string = ' '.join([token for _, token in sorted_tokens])
-    return token_string
+    return ' '.join(filtered_tokens)
