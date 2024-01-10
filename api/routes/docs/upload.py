@@ -28,7 +28,7 @@ def upload_file(index_name):
 
             extension = file_extension.lstrip('.')
 
-            if file_extension == '.txt' or file_extension == '.csv':
+            if extension != 'pdf':
                 content = file.read().decode('utf-8')
             else:
                 content = extract_text_from_pdf(file.stream)
@@ -36,7 +36,9 @@ def upload_file(index_name):
             # Si le contenu du document n'est pas en anglais, on le traduit
             content = translate_if_not_english(content)
             
-            content_tokenize = tokenization(content)
+            if extension != 'csv':
+                content = tokenization(content)
+
             description_tokenize = tokenization(description)
 
             # Créez le doc pour la BD
@@ -47,7 +49,7 @@ def upload_file(index_name):
                 "creatorName": "User",
                 "source": "upload",
                 "data_type": data_type,
-                "content": content_tokenize
+                "content": content
             }
 
             # Indexer le document dans ElasticSearch
