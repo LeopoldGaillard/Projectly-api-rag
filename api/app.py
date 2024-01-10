@@ -29,4 +29,4 @@ app.register_blueprint(delete_doc)
 def welcome():
     return "Welcome to Projectly !"
 
-app.run()
+app.run(port=49168)
