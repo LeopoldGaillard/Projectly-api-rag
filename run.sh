@@ -9,16 +9,11 @@ echo "Installing Python dependencies..."
 pip3 install -r requirements.txt
 
 echo "Starting Elasticsearch..."
-elasticsearch
+elasticsearch &
+
+# little sleep to wait for elasticsearch to start
+sleep 20
 
 cd ./api
 echo "Starting Flask server..."
-nohup python3 app.py &
-
-cd ../upload_app
-
-echo "Installing React dependencies..."
-npm install
-
-echo "Starting React app..."
-npm start
+nohup python3 app.pyv

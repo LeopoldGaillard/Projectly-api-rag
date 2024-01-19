@@ -8,6 +8,10 @@ Implementation of an UI example for the API's upload feature
 
 - The UI is made with React
 
+## Requirements
+
+Install [Elasticsearch](https://www.elastic.co/fr/downloads/elasticsearch) and set it as an environment variable
+
 ## Launching
 
 To use and test the API, execute the file run.sh in the root directory of the project.
