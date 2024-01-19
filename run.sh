@@ -16,4 +16,4 @@ sleep 20
 
 cd ./api
 echo "Starting Flask server..."
-nohup python3 app.pyv
+nohup python3 app.py
