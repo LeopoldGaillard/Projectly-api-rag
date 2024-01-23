@@ -1,4 +1,5 @@
 from config import *
+from flask import Response, stream_with_context
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage
 from functions import rag_search
@@ -28,5 +29,8 @@ def get_answer():
         HumanMessage(content=req),
     ]
 
-    response = chat(messages)
-    return jsonify({"answer": response.content})
+    def generate():
+        for chunk in chat.stream(messages):
+            yield chunk.content
+
+    return Response(stream_with_context(generate()), mimetype='text/plain')
