@@ -5,6 +5,7 @@ from config import client
 
 from routes.create_index import create_index
 from routes.delete_index import delete_index
+from routes.chatbot import chatbot
 from routes.docs.all import all_docs
 from routes.docs.rag_search import rag_search
 from routes.docs.upload import upload_api
@@ -18,6 +19,7 @@ CORS(app)
 
 app.register_blueprint(create_index)
 app.register_blueprint(delete_index)
+app.register_blueprint(chatbot)
 app.register_blueprint(all_docs)
 app.register_blueprint(rag_search)
 app.register_blueprint(upload_api)
@@ -29,4 +31,4 @@ app.register_blueprint(delete_doc)
 def welcome():
     return "Welcome to Projectly !"
 
-app.run(port=49168)
+app.run(debug=True, port=49168)

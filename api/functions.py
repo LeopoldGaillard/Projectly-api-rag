@@ -5,6 +5,7 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import string
+import requests
 
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -68,3 +69,35 @@ def tokenization(text):
     filtered_tokens = [word for word in tokens if word not in stop_words]
     
     return ' '.join(filtered_tokens)
+
+def rag_search(query):
+    url = f"http://127.0.0.1:49168/projectly/docs/rag_search/{query}"
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        return {"error": "Unable to fetch data"}
+
+    res = response.json()
+    context = ""
+    highlights = []
+
+    if res != []:
+        for i, item in enumerate(res, start=1):
+            data = item["_source"]
+            context += f"Title: {data['title']}\nDescription: {data['description']}\nContent: {data['content']}\n\n"
+            
+            if i <= 2:
+                test_len = context
+
+            # Traitement des highlights
+            highlight = item.get('highlight', {})
+            text_parts = [' '.join(highlight.get(field, [])) for field in ['title', 'description', 'content']]
+            highlights.append(' '.join(text_parts))
+
+        if len(test_len) <= 3500:
+            return f"Potentially relevant context : {test_len}" if test_len else ""
+
+        all_highlights = ' '.join(highlights)
+        return f"Potentially relevant context : {all_highlights[:7000]}" if all_highlights else ""
+    else:
+        return "No relevant context found."
