@@ -14,6 +14,5 @@ elasticsearch &
 # little sleep to wait for elasticsearch to start
 sleep 20
 
-cd ./api
 echo "Starting Flask server..."
 nohup python3 app.py
