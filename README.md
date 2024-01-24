@@ -4,10 +4,6 @@ Implementation of a RAG API with an Elasticsearch database
 
 - The API is made with Python and Flask framework
 
-Implementation of an UI example for the API's upload feature
-
-- The UI is made with React
-
 ## Requirements
 
 Install [Elasticsearch](https://www.elastic.co/fr/downloads/elasticsearch) and set it as an environment variable
@@ -57,7 +53,7 @@ This API exposes the following endpoints :
 - URL : `/rag_docs/all`
 - Method : `GET`
 - Description : Retrieve all documents
-- Example : http://127.0.0.1:49168/projectly/docs/all
+- Example : http://127.0.0.1:49168/rag_docs/all
 
 ### RAG search
 
@@ -65,7 +61,20 @@ This API exposes the following endpoints :
 - Method : `GET`
 - Description : Retrieve documents with a specific request
 - URL Params : `req=[req]`
-- Example : http://127.0.0.1:49168/projectly/docs/rag_search/bill
+- Example : If we ask "what is finance ?", the url will be http://127.0.0.1:49168/rag_docs/search/what%20is%20finance%20?
+
+### Chatbot answer
+
+- URL : `/rag_docs/chatbot`
+- Method : `POST`
+- Description : Give an answer to a specific question thanks to OPENAI API and RAG context
+- Request body :
+  ```json
+  {
+    "prompt": "what is finance ?"
+  }
+  ```
+- Example : http://127.0.0.1:49168/rag_docs/chatbot
 
 ### Upload document
 
