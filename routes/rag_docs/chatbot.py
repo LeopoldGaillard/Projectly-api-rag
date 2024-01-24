@@ -1,6 +1,6 @@
 from config import *
 from flask import Response, stream_with_context
-from langchain.chat_models import ChatOpenAI
+from langchain_community.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage
 from functions import rag_search
 import os
