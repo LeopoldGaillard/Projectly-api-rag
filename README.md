@@ -20,8 +20,6 @@ It will install Python dependencies and launch the API on http://127.0.0.1:49168
 
 You can directly test the GET methods on your browser or utilize Postman for all request methods.
 
-The shell script will also launch the UI on http://localhost:3000/, allowing you to easily test the API's upload functionality.
-
 ## Endpoints
 
 This API exposes the following endpoints :
@@ -56,14 +54,14 @@ This API exposes the following endpoints :
 
 ### Display all documents
 
-- URL : `/projectly/docs/all`
+- URL : `/rag_docs/all`
 - Method : `GET`
 - Description : Retrieve all documents
 - Example : http://127.0.0.1:49168/projectly/docs/all
 
 ### RAG search
 
-- URL : `/projectly/docs/rag_search/<req>`
+- URL : `/rag_docs/search/<req>`
 - Method : `GET`
 - Description : Retrieve documents with a specific request
 - URL Params : `req=[req]`
@@ -71,14 +69,14 @@ This API exposes the following endpoints :
 
 ### Upload document
 
-- URL : `/projectly/docs/upload`
+- URL : `/rag_docs/upload`
 - Method : `POST`
 - Description : Add a new document
 - Example : try directly the upload feature on the UI on http://localhost:3000
 
 ### Update document
 
-- URL : `/projectly/docs/update/<id>`
+- URL : `/rag_docs/update/<id>`
 - Method : `PUT`
 - Description : Update a document with a specific id and a content specified in the request body
 - URL Params : `id=[id]`
@@ -94,7 +92,7 @@ This API exposes the following endpoints :
 
 ### Delete document
 
-- URL : `/projectly/docs/delete/<id>`
+- URL : `/rag_docs/delete/<id>`
 - Method : `DELETE`
 - Description : Delete a document with a specific id
 - URL Params : `id=[id]`

@@ -4,8 +4,8 @@ import json
 rag_search = Blueprint('rag_search', __name__)
 
 # Route qui affiche les documents avec le contenu recherché (content ou title)
-@rag_search.route('/<index_name>/docs/rag_search/<req>')
-def get_files_by_request(index_name, req):
+@rag_search.route('/rag_docs/search/<req>')
+def get_files_by_request(req):
     query = {
         "query": {
             "multi_match": {
@@ -26,7 +26,7 @@ def get_files_by_request(index_name, req):
         }
     }
 
-    response = client.search(index=index_name, body=query)
+    response = client.search(index="projectly", body=query)
     pretty_response = json.dumps(response['hits']['hits'], indent=3)
 
     return Response(pretty_response, content_type="application/json")

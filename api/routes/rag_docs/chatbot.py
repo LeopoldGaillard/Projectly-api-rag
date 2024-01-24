@@ -11,7 +11,7 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 chatbot = Blueprint('chatbot', __name__)
-@chatbot.route('/chatbot', methods=['POST'])
+@chatbot.route('/rag_docs/chatbot', methods=['POST'])
 def get_answer():
 
     data = request.get_json()

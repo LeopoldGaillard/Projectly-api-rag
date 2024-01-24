@@ -71,7 +71,7 @@ def tokenization(text):
     return ' '.join(filtered_tokens)
 
 def rag_search(query):
-    url = f"http://127.0.0.1:49168/projectly/docs/rag_search/{query}"
+    url = f"http://127.0.0.1:49168/rag_docs/search/{query}"
     response = requests.get(url)
 
     if response.status_code != 200:
