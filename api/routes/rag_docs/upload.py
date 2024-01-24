@@ -7,8 +7,8 @@ ALLOWED_EXTENSIONS = ['.txt', '.pdf', '.csv']
 
 upload_api = Blueprint('upload_api', __name__)
 
-@upload_api.route("/<index_name>/docs/upload", methods=['POST'])
-def upload_file(index_name):
+@upload_api.route("/rag_docs/upload", methods=['POST'])
+def upload_file():
 
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
@@ -53,7 +53,7 @@ def upload_file(index_name):
             }
 
             # Indexer le document dans ElasticSearch
-            response = client.index(index=index_name, document=document)
+            response = client.index(index="projectly", document=document)
 
             return jsonify(response.body)
         else:
