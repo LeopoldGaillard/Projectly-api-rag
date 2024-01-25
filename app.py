@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
+from waitress import serve
 from functions import *
 from config import client
 
@@ -31,4 +32,5 @@ app.register_blueprint(delete_doc)
 def welcome():
     return "Welcome to Projectly !"
 
-app.run(host='0.0.0.0', port=49168)
+
+serve(app, host="0.0.0.0", port=49168)
