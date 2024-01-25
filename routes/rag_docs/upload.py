@@ -21,6 +21,7 @@ def upload_file():
         filename = secure_filename(file.filename)
         file_extension = os.path.splitext(filename)[1]
 
+        id = request.form.get('id')
         description = request.form.get('description', 'No description provided')
         data_type = request.form.get('dataType', 'No data type provided')
 
@@ -43,6 +44,7 @@ def upload_file():
 
             # Créez le doc pour la BD
             document = {
+                "id": id,
                 "title": filename,
                 "description": description_tokenize,
                 "extension": extension,
