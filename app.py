@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_cors import CORS
-from waitress import serve
 from functions import *
 from config import client
 
@@ -30,7 +29,4 @@ app.register_blueprint(delete_doc)
 # Route principale
 @app.route('/')
 def welcome():
-    return "Welcome to Projectly !"
-
-
-serve(app, host="0.0.0.0", port=49168)
+    return "Welcome to RAG API !"
