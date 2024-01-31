@@ -6,6 +6,12 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import string
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+URL_HEROKU_RAG = os.getenv("URL_HEROKU_RAG")
 
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -71,7 +77,7 @@ def tokenization(text):
     return ' '.join(filtered_tokens)
 
 def rag_search(query):
-    url = f"http://127.0.0.1:49168/rag_docs/search/{query}"
+    url = f"{URL_HEROKU_RAG}/rag_docs/search/{query}"
     response = requests.get(url)
 
     if response.status_code != 200:
