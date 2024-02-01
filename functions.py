@@ -13,8 +13,17 @@ load_dotenv()
 
 URL_HEROKU_RAG = os.getenv("URL_HEROKU_RAG")
 
-nltk.download('punkt')
-nltk.download('stopwords')
+# Chemin vers le dossier nltk_data sur Heroku
+nltk_data_dir = '/app/nltk_data'
+
+# Vérifier si le dossier nltk_data existe déjà
+if not os.path.exists(nltk_data_dir):
+    
+    nltk.data.path.append(nltk_data_dir)
+    
+    # Télécharger 'punkt' et 'stopwords'
+    nltk.download('punkt', download_dir=nltk_data_dir)
+    nltk.download('stopwords', download_dir=nltk_data_dir)
 
 def init_es_db(client):
 
