@@ -6,7 +6,7 @@ Implementation of a RAG API with an Elasticsearch database
 
 ## Requirements
 
-Install [Elasticsearch](https://www.elastic.co/fr/downloads/elasticsearch) and set it as an environment variable
+Install [Elasticsearch](https://www.elastic.co/fr/downloads/elasticsearch) and set it as an environment variable if you want to use the API locally.
 
 ## Launching
 
@@ -97,12 +97,12 @@ This API exposes the following endpoints :
     "content": "new content"
   }
   ```
-- Example : http://127.0.0.1:49168/projectly/docs/update/idTesthhh007
+- Example : http://127.0.0.1:49168/rag_docs/update/idTesthhh007
 
 ### Delete document
 
 - URL : `/rag_docs/delete/<id>`
 - Method : `DELETE`
-- Description : Delete a document with a specific id
+- Description : Delete a document with a shared id with docs in Firebase
 - URL Params : `id=[id]`
-- Example : http://127.0.0.1:49168/projectly/docs/delete/idTesthhh007
+- Example : http://127.0.0.1:49168/rag_docs/delete/idTesthhh007
