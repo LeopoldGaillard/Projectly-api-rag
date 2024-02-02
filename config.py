@@ -8,7 +8,7 @@ load_dotenv()
 ELASTIC_PASSWORD = os.getenv("ELASTIC_PASSWORD")
 CLOUD_ID = os.getenv("CLOUD_ID")
 
-# Initialisation de l'instance Elasticsearch
+# Initialize the Elasticsearch instance
 client = Elasticsearch(
     cloud_id=CLOUD_ID,
     basic_auth=("elastic", ELASTIC_PASSWORD)

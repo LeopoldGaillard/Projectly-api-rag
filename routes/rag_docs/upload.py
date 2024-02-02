@@ -5,11 +5,20 @@ import os
 
 ALLOWED_EXTENSIONS = ['.txt', '.pdf', '.csv']
 
-upload_api = Blueprint('upload_api', __name__)
+# Initialize a Flask Blueprint named 'upload_doc'
+upload_doc = Blueprint('upload_doc', __name__)
 
-@upload_api.route("/rag_docs/upload", methods=['POST'])
+@upload_doc.route("/rag_docs/upload", methods=['POST'])
 def upload_file():
-
+    """Handle file uploads and add the uploaded document to the Elasticsearch index 'projectly'.
+    
+    This route handles POST requests to the '/rag_docs/upload' endpoint. It checks the presence and validity of the
+    uploaded file, processes the content based on the file type, and indexes the processed content into Elasticsearch.
+    
+    Returns:
+        A Flask Response object containing the Elasticsearch response body as JSON, indicating
+        the result of the indexing operation, or an error message in case of failure.
+    """
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
 
@@ -21,6 +30,7 @@ def upload_file():
         filename = secure_filename(file.filename)
         file_extension = os.path.splitext(filename)[1]
 
+        # Retrieve data from the request
         id = request.form.get('id')
         description = request.form.get('description', 'No description provided')
         data_type = request.form.get('dataType', 'No data type provided')
@@ -34,7 +44,7 @@ def upload_file():
             else:
                 content = extract_text_from_pdf(file.stream)
 
-            # Si le contenu du document n'est pas en anglais, on le traduit
+            # Translate content to English if it's in another language
             content = translate_if_not_english(content)
             
             if extension != 'csv':
@@ -42,7 +52,7 @@ def upload_file():
 
             description_tokenize = tokenization(description)
 
-            # Créez le doc pour la BD
+            # Create the document for indexing
             document = {
                 "id": id,
                 "title": filename,
@@ -54,7 +64,7 @@ def upload_file():
                 "content": content
             }
 
-            # Indexer le document dans ElasticSearch
+            # Index the document in Elasticsearch
             response = client.index(index="projectly", document=document)
 
             return jsonify(response.body)
