@@ -1,6 +1,7 @@
 from config import *
 from functions import *
 from werkzeug.utils import secure_filename
+from datetime import date
 import os
 
 ALLOWED_EXTENSIONS = ['.txt', '.pdf', '.csv']
@@ -34,6 +35,7 @@ def upload_file():
         id = request.form.get('id')
         description = request.form.get('description', 'No description provided')
         data_type = request.form.get('dataType', 'No data type provided')
+        creator_name = request.form.get('creatorName', 'Unknown')
 
         if file_extension in ALLOWED_EXTENSIONS:
 
@@ -56,9 +58,11 @@ def upload_file():
             document = {
                 "id": id,
                 "title": filename,
+                "size": file.content_length,
+                "date": date.today(),
                 "description": description_tokenize,
                 "extension": extension,
-                "creatorName": "User",
+                "creatorName": creator_name,
                 "source": "upload",
                 "data_type": data_type,
                 "content": content

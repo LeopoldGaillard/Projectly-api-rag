@@ -54,6 +54,8 @@ def init_es_db(client):
                 "properties": {
                     "id": {"type": "keyword"},
                     "title": {"type": "text"},
+                    "size": {"type": "long"},
+                    "date": {"type": "date"},
                     "description": {"type": "text"},
                     "extension": {"type": "keyword"},
                     "creatorName": {"type": "keyword"},
