@@ -1,13 +1,12 @@
 from config import *
 from flask import Response, stream_with_context
-from langchain_openai import ChatOpenAI
-from langchain.schema import HumanMessage, SystemMessage
+from ChatHandler import *
 from functions import rag_search
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+MODEL = os.getenv("MODEL")
 
 # Initialize a Flask Blueprint named 'chatbot'
 chatbot = Blueprint('chatbot', __name__)
@@ -29,20 +28,10 @@ def get_answer():
     # Get additional context for the chatbot's response from the 'rag_search' function
     rag_context = rag_search(req)
 
-    chat = ChatOpenAI(api_key=OPENAI_API_KEY)
+    chat_handler = get_chat_handler(MODEL)
 
-    messages = [
-        SystemMessage(
-            content=f"""You are FinSync AI, a professional in finance.
-             As a financial expert, you're here to assist customers with information and advice on various financial topics.
-             {rag_context}"""
-        ),
-        HumanMessage(content=req),
-    ]
-
-    # Generator function to stream the chatbot's responses
     def generate():
-        for chunk in chat.stream(messages):
-            yield chunk.content
+        for chunk in chat_handler.get_response_stream(req, rag_context):
+            yield chunk.content if hasattr(chunk, 'content') else chunk.choices[0].delta.content
 
     return Response(stream_with_context(generate()), mimetype='text/plain')

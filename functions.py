@@ -109,8 +109,8 @@ def translate_if_not_english(content):
     
     if detect(content) != 'en':
         # To avoid the not valid length error (must be between 0 and 5000 characters),
-        # we split the content into chunks of 150 words
-        chunks = list(split_into_chunks(content, 150))
+        # we split the content into chunks of 200 words
+        chunks = list(split_into_chunks(content, 200))
         content = ''
         for chunk in chunks:
             content += GoogleTranslator(source='auto', target='en').translate(chunk) + ' '
