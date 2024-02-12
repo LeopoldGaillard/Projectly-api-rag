@@ -106,3 +106,17 @@ This API exposes the following endpoints :
 - Description : Delete a document with a shared id with docs in Firebase
 - URL Params : `id=[id]`
 - Example : http://127.0.0.1:49168/rag_docs/delete/idTesthhh007
+
+### Display all transactions
+
+- URL : `/transactions`
+- Method : `GET`
+- Description : Retrieve all transactions
+- Example : http://127.0.0.1:49168/transactions
+
+### Display all bills
+
+- URL : `/bills`
+- Method : `GET`
+- Description : Retrieve all bills
+- Example : http://127.0.0.1:49168/bills

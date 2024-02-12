@@ -7,6 +7,7 @@ from nltk.tokenize import word_tokenize
 import string
 import requests
 import os
+import json
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -194,3 +195,81 @@ def rag_search(query):
 
     all_highlights = ' '.join(highlights)
     return f"Potentially relevant context :{all_highlights[:7000]}"
+
+def authenticate(url_odoo, db, username, api_key):
+    """Authenticate a user with the Odoo API.
+
+    Args:
+        url_odoo (str): URL of the Odoo server
+        db (str): name of the database
+        username (str): name of the user
+        api_key (str): API key of the user
+    
+    Returns:
+        int: The user's session identifier if the authentication is successful, otherwise None
+    """
+    login_url = f"{url_odoo}/jsonrpc"
+    headers = {"Content-Type": "application/json"}
+    payload = {
+        "jsonrpc": "2.0",
+        "method": "call",
+        "params": {
+            "service": "common",
+            "method": "login",
+            "args": [db, username, api_key],
+        },
+        "id": 1,
+    }
+    response = requests.post(login_url, data=json.dumps(payload), headers=headers)
+    return response.json().get("result")
+
+def rpc_call(url, db, uid, api_key, model, method, args, kwargs={}):
+    """Make a remote procedure call to the Odoo API.
+
+    Args:
+        url (str): URL of the Odoo server
+        db (str): name of the database
+        uid (int): user's session identifier
+        api_key (str): API key of the user
+        model (str): name of the model to call
+        method (str): name of the method to call
+        args (list): list of arguments to pass to the method
+        kwargs (dict): dictionary of keyword arguments to pass to the method
+
+    Returns:
+        Any: The result of the remote procedure call
+    """
+    endpoint = f"{url}/jsonrpc"
+    headers = {"Content-Type": "application/json"}
+    payload = {
+        "jsonrpc": "2.0",
+        "method": "call",
+        "params": {
+            "service": "object",
+            "method": "execute_kw",
+            "args": [db, uid, api_key, model, method, args, kwargs],
+        },
+        "id": uid,
+    }
+    response = requests.post(endpoint, data=json.dumps(payload), headers=headers)
+    return response.json().get("result")
+
+def get_customer_invoices(url, db, uid, api_key):
+    """Retrieve customer invoices from the Odoo API.
+
+    Args:
+        url (str): URL of the Odoo server
+        db (str): name of the database
+        uid (int): user's session identifier
+        api_key (str): API key of the user
+
+    Returns:
+        list: A list of dictionaries, each containing the details of a customer invoice
+    """
+    model = 'account.move'
+    method = 'search_read'
+    # The filter here is adjusted to target customer invoices ('out_invoice' for customer invoices)
+    domain = []
+    fields = ['name', 'partner_id', 'amount_total', 'amount_untaxed', 'amount_tax' ,'state', 'invoice_date', 'currency_id','partner_id', 'company_id']  # Les champs que vous souhaitez récupérer
+    customer_invoices = rpc_call(url, db, uid, api_key, model, method, [domain], {'fields': fields})
+    return customer_invoices

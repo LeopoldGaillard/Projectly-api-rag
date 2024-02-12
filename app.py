@@ -7,6 +7,8 @@ from config import client
 # Blueprints help organize the application into distinct components.
 from routes.create_index import create_index
 from routes.delete_index import delete_index
+from routes.transactions import transactions
+from routes.bills import bills
 from routes.rag_docs.chatbot import chatbot
 from routes.rag_docs.all import all_docs
 from routes.rag_docs.search import rag_search
@@ -32,6 +34,8 @@ app.register_blueprint(rag_search)
 app.register_blueprint(upload_doc)
 app.register_blueprint(update_doc)
 app.register_blueprint(delete_doc)
+app.register_blueprint(transactions)
+app.register_blueprint(bills)
 
 @app.route('/')
 def welcome():
